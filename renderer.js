@@ -42,6 +42,8 @@ const loadProjectBtn = document.getElementById('loadProject');
 const timeDisplay = document.getElementById('timeDisplay');
 const speedSlider = document.getElementById('speedSlider');
 const speedLabel = document.getElementById('speedLabel');
+const volumeSlider = document.getElementById('volumeSlider');
+const volumeLabel = document.getElementById('volumeLabel');
 
 // Zoom
 const zoomInBtn = document.getElementById('zoomIn');
@@ -56,6 +58,12 @@ speedSlider.addEventListener('input', () => {
   const val = parseFloat(speedSlider.value);
   wavesurfer.setPlaybackRate(val);
   speedLabel.textContent = `${val.toFixed(2)}x`;
+});
+
+volumeSlider.addEventListener('input', () => {
+  const val = parseFloat(volumeSlider.value);
+  wavesurfer.setVolume(val);
+  volumeLabel.textContent = `${Math.round(val * 100)}%`;
 });
 
 // --------------------
@@ -263,6 +271,9 @@ wavesurfer.on('ready', () => {
   speedSlider.value = 1;
   speedLabel.textContent = '1.00x';
   wavesurfer.setPlaybackRate(1);
+  volumeSlider.value = 1;
+  volumeLabel.textContent = '100%';
+  wavesurfer.setVolume(1);
 
   if (savedMarkersTimes.length > 0) {
     clearMarkers();
