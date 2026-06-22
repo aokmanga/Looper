@@ -36,6 +36,7 @@ const stopBtn = document.getElementById('stop');
 const markerBtn = document.getElementById('marker');
 const status = document.getElementById('status');
 const loopBtn = document.getElementById('loopBtn');
+const loopRestartBtn = document.getElementById('loopRestart');
 const saveProjectBtn = document.getElementById('saveProject');
 const loadProjectBtn = document.getElementById('loadProject');
 const timeDisplay = document.getElementById('timeDisplay');
@@ -344,11 +345,14 @@ document.addEventListener('keydown', (e) => {
   }
   if (k === 'm') createMarker();
   if (k === 'l') toggleLoop();
+  if (k === 'k') restartLoop();
   if (e.key === '+' || e.key === '=') adjustZoom(20);
   if (e.key === '-') adjustZoom(-20);
 });
 
 loopBtn.addEventListener('click', toggleLoop);
+
+loopRestartBtn.addEventListener('click', restartLoop);
 
 // --------------------
 // PROJECT MANAGEMENT
@@ -696,6 +700,17 @@ function setLoopPoint(marker) {
   status.textContent = `Loop A→B: ${loopStart.toFixed(2)}s — ${loopEnd.toFixed(2)}s · Premi L per attivare`;
 
   if (loopActive) startLoopEngine();
+}
+
+function restartLoop() {
+  if (loopStart === null) {
+    status.textContent = 'Nessun loop definito da ricominciare.';
+    return;
+  }
+  wavesurfer.setTime(loopStart);
+  if (!wavesurfer.isPlaying()) {
+    wavesurfer.play();
+  }
 }
 
 function toggleLoop() {
