@@ -144,3 +144,5 @@ vite.config.ts.timestamp-*
 # Rust build artifacts
 src-tauri/target/
 src-tauri/target/
+.DS_Store
+src-tauri/.DS_Store
