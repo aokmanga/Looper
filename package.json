@@ -1,0 +1,29 @@
+{
+  "name": "looper",
+  "version": "1.0.0",
+  "description": "Applicazione per la gestione di marker e loop audio",
+  "homepage": "https://github.com/simone/looper",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "vite build",
+    "tauri:dev": "tauri dev",
+    "tauri:build": "tauri build",
+    "start": "npm run tauri:dev"
+  },
+  "keywords": [],
+  "author": {
+    "name": "Simone",
+    "email": "simone@example.com"
+  },
+  "license": "ISC",
+  "type": "module",
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.11.3",
+    "vite": "^7.2.7"
+  },
+  "dependencies": {
+    "@tauri-apps/api": "^2.11.1",
+    "@tauri-apps/plugin-dialog": "^2.4.1",
+    "wavesurfer.js": "^7.12.8"
+  }
+}

@@ -1,0 +1,1 @@
+{"default":{"identifier":"default","description":"Permessi necessari per aprire e salvare file con i dialoghi nativi.","local":true,"windows":["main"],"permissions":["core:default","dialog:default"]}}
