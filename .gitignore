@@ -143,3 +143,4 @@ vite.config.ts.timestamp-*
 .vite/
 # Rust build artifacts
 src-tauri/target/
+src-tauri/target/
