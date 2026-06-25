@@ -15,6 +15,7 @@ const wavesurfer = WaveSurfer.create({
 // --------------------
 // STATE
 // --------------------
+let selectedMarker = null;
 let markers = [];
 let loopStart = null;
 let loopEnd = null;
@@ -230,8 +231,7 @@ loadBtn.addEventListener('click', async () => {
     try {
       // Usa direttamente il path locale, convertito in URL sicuro per spazi e caratteri speciali.
       const fileUrl = await toFileUrl(filePath);
-
-      markers = [];
+      clearMarkers();
       loopStart = null;
       loopEnd = null;
       loopActive = false;
@@ -241,7 +241,6 @@ loadBtn.addEventListener('click', async () => {
       timeDisplay.textContent = '00.00 / 00.00';
       updateLoopBtn();
       removeLoopRegion();
-      clearMarkers();
 
       currentAudioPath = filePath;
       status.textContent = `Caricamento: ${fileName}...`;
@@ -344,8 +343,23 @@ stopBtn.addEventListener('click', () => {
 markerBtn.addEventListener('click', () => createMarker());
 
 document.addEventListener('keydown', (e) => {
-  const k = e.key.toLowerCase();
   if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+  const k = e.key.toLowerCase();
+  if (k === 'backspace' && selectedMarker) {
+  selectedMarker.el.remove();
+  markers = markers.filter(m => m !== selectedMarker);
+  
+  if (selectedMarker.isLoopPoint) {
+    if (loopStart === selectedMarker.time) loopStart = null;
+    if (loopEnd === selectedMarker.time) loopEnd = null;
+    updateLoopRegion();
+  }
+  
+  selectedMarker = null;
+  updateMarkerLabels();
+  updateMarkerColors();
+  return;
+}
   if (k === 'p') wavesurfer.playPause();
   if (k === 'o') {
     wavesurfer.stop();
@@ -414,6 +428,7 @@ loadProjectBtn.addEventListener('click', async () => {
       const projectData = JSON.parse(fileContent);
 
       if (projectData.audioPath) {
+        clearMarkers();
         savedMarkersTimes = projectData.markerTimes || [];
         loopStart = projectData.loopStart !== undefined ? projectData.loopStart : null;
         loopEnd = projectData.loopEnd !== undefined ? projectData.loopEnd : null;
@@ -493,6 +508,8 @@ function createMarker(specificTime) {
   let isDragging = false;
 
   marker.el.addEventListener('mousedown', (e) => {
+        selectedMarker = marker;
+        updateMarkerColors();
     e.stopPropagation();
     e.preventDefault();
     isDragging = false;
@@ -537,6 +554,7 @@ function createMarker(specificTime) {
   });
 
   marker.el.addEventListener('click', (e) => {
+
     e.stopPropagation();
     if (!isDragging) {
       setLoopPoint(marker);
@@ -570,8 +588,11 @@ function positionMarker(marker, immediateOnly = false) {
 
 function updateMarkerColors() {
   markers.forEach(m => {
-    if (m.isLoopPoint) {
-      m.el.style.background = '#30d158'; // verde per i loop point
+    if (m === selectedMarker) {
+      m.el.style.background = '#007aff'; 
+      m.el.style.boxShadow = '0 0 6px rgba(0, 122, 255, 0.8)';
+    } else if (m.isLoopPoint) {
+      m.el.style.background = '#30d158'; 
       m.el.style.boxShadow = '0 0 6px rgba(48, 209, 88, 0.5)';
     } else {
       m.el.style.background = '#ff3b30';
@@ -778,7 +799,17 @@ function stopLoopEngine() {
 }
 
 function clearMarkers() {
-  document.querySelectorAll('.marker').forEach(m => m.remove());
+  markers.forEach(m => m.el.remove());
   markers = [];
   removeLoopRegion();
+  loopStart = null;
+  loopEnd = null;
 }
+const clearAllMarkers = clearMarkers;
+document.getElementById('clearMarkers').addEventListener('click', clearMarkers);
+document.addEventListener('mousedown', (e) => {
+  if (!e.target.closest('.marker')) {
+    selectedMarker = null;
+    updateMarkerColors();
+  }
+});
